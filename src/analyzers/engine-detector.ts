@@ -320,7 +320,7 @@ export class EngineDetector {
       ],
       analyze: async (document: Document) => {
         const warnings = [];
-        const canvas = document.querySelector('#gameCanvas');
+        const canvas = document.querySelector('#gameCanvas') as HTMLCanvasElement;
         if (canvas) {
           const context = canvas.getContext('2d');
           if (!context) {

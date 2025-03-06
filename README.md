@@ -1,180 +1,109 @@
-# WebGL MCP Server
+# Grokade Games WebGL-MCP
 
-A Model Context Protocol (MCP) server for analyzing, optimizing, and managing WebGL-based games and applications. This server provides tools and resources for detecting game engines, analyzing WebGL capabilities, and optimizing performance across different platforms.
+A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. This server provides tools for Cursor IDE to analyze WebGL applications, optimize performance, and provide insights into WebGL-based games and applications.
 
 ## Features
 
-- **Engine Detection**: Automatically detect and analyze various game engines:
-  - Unity WebGL
-  - Godot
-  - Construct
-  - GDevelop
-  - PICO-8
-  - TIC-80
-  - Bitsy
-  - PuzzleScript
-  - p5.js
-  - And more...
-
-- **WebGL Analysis**:
-  - WebGL 1.0/2.0 capability detection
-  - Extension support analysis
-  - Texture compression support
-  - Performance metrics tracking
-  - Memory usage monitoring
-
-- **Optimization Tools**:
-  - Template modification for better performance
-  - Mobile optimization suggestions
-  - Asset loading optimization
-  - Memory management recommendations
-  - Touch input handling
+- WebGL application analysis
+- Performance optimization suggestions
+- Memory usage analysis
+- Engine detection (Unity, Godot, etc.)
+- Shader optimization recommendations
 
 ## Installation
 
-1. **Prerequisites**:
-   ```bash
-   # Make sure you have Node.js 16+ installed
-   node --version
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/grokadegames/webgl-mcp.git
+cd webgl-mcp
 
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+# Install dependencies
+npm install
 
-3. **Install Type Definitions**:
-   ```bash
-   npm install --save-dev @types/winston @types/express @types/ws @modelcontextprotocol/sdk
-   ```
+# Build the TypeScript project
+npm run build
+```
 
-## Usage
+## Usage with Cursor IDE
 
-1. **Start the Server**:
-   ```bash
-   npm start
-   ```
+This MCP server is designed to work with Cursor IDE to provide context for WebGL applications. To use it:
 
-2. **Connect via MCP Client**:
-   ```typescript
-   import { McpClient } from '@modelcontextprotocol/sdk';
+1. Start the MCP server:
 
-   const client = new McpClient('ws://localhost:3000');
-   await client.connect();
-   ```
+```bash
+npm run cursor-mcp
+```
 
-3. **Use with Cursor IDE**:
-   - Open Cursor IDE
-   - Install the MCP extension
-   - Connect to `ws://localhost:3000`
-   - Use the WebGL analysis tools from the MCP panel
+2. In Cursor IDE, connect to the MCP server.
 
-## API Reference
+3. Use the available tools to analyze and optimize your WebGL applications.
 
-### Resources
+## Available Tools
 
-1. **WebGL Context** (`webgl://{contextId}`):
-   - Get WebGL context information and capabilities
+### analyze-webgl
 
-2. **Performance Metrics** (`metrics://{engineId}`):
-   - Real-time performance monitoring
-   - WebGL capabilities
-   - Memory usage stats
+Analyzes a WebGL build or HTML file.
 
-3. **Engine Analysis** (`analysis://{engineId}`):
-   - Engine detection results
-   - Feature support
-   - Optimization recommendations
+Parameters:
+- `path` (required): Path to WebGL build folder or index.html file
 
-4. **Template Configuration** (`template://{engineId}`):
-   - Template management
-   - Customization options
+Example:
+```
+analyze-webgl(path: "/path/to/webgl/build")
+```
 
-### Tools
+### optimize-webgl
 
-1. **analyze-build**:
-   ```typescript
-   const result = await client.tool('analyze-build', {
-     buildPath: './build'
-   });
-   ```
+Suggests optimizations for WebGL applications.
 
-2. **detect-engine**:
-   ```typescript
-   const result = await client.tool('detect-engine', {
-     html: document.documentElement.outerHTML
-   });
-   ```
+Parameters:
+- `path` (required): Path to WebGL build folder or index.html file
+- `targetFPS` (optional): Target frames per second
+- `memoryLimit` (optional): Memory limit in MB
+- `optimizationGoals` (optional): Array of optimization goals ('performance', 'memory', 'quality', 'mobile')
 
-3. **modify-template**:
-   ```typescript
-   const result = await client.tool('modify-template', {
-     title: 'My Game',
-     loadingBar: true,
-     compression: true
-   });
-   ```
+Example:
+```
+optimize-webgl(path: "/path/to/webgl/build", targetFPS: 60, optimizationGoals: ["performance", "mobile"])
+```
 
-### Prompts
+### analyze-performance
 
-1. **optimize-webgl**:
-   ```typescript
-   const result = await client.prompt('optimize-webgl', {
-     engineId: 'unity',
-     targetFPS: 60,
-     optimizationGoals: ['performance', 'mobile']
-   });
-   ```
+Analyzes performance metrics.
 
-2. **optimize-mobile**:
-   ```typescript
-   const result = await client.prompt('optimize-mobile', {
-     engineId: 'unity',
-     targetDevices: ['ios', 'android'],
-     powerEfficient: true
-   });
-   ```
+Parameters:
+- `path` (required): Path to WebGL build folder or index.html file
+- `duration` (optional): Duration of performance test in seconds
 
-## Configuration
-
-Create a `.env` file in the root directory:
-```env
-PORT=3000
-NODE_ENV=development
-LOG_LEVEL=info
+Example:
+```
+analyze-performance(path: "/path/to/webgl/build", duration: 30)
 ```
 
 ## Development
 
-1. **Build the Project**:
-   ```bash
-   npm run build
-   ```
-
-2. **Run Tests**:
-   ```bash
-   npm test
-   ```
-
-3. **Development Mode**:
-   ```bash
-   npm run dev
-   ```
-
-## Contributing
+To contribute to this project:
 
 1. Fork the repository
 2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+3. Make your changes
+4. Submit a pull request
+
+## Scripts
+
+- `npm run build`: Build the TypeScript project
+- `npm run dev`: Run the development server with hot reloading
+- `npm run start`: Start the compiled server
+- `npm run cursor-mcp`: Start the MCP server for Cursor IDE
+- `npm run simple-mcp`: Start a simple MCP server for testing
+- `npm run test`: Run tests
+- `npm run lint`: Run linting
+- `npm run format`: Format code
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details
+MIT
 
-## Support
+## Author
 
-- GitHub Issues: [Report a bug](https://github.com/yourusername/WebGL-MCP/issues)
-- Documentation: [Full documentation](docs/README.md)
-- Discord: [Join our community](https://discord.gg/yourdiscord) 
+Grokade Games 

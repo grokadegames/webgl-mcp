@@ -12,7 +12,9 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "docs": "typedoc --out docs/api src",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "simple-mcp": "node simple-mcp.mjs",
+    "cursor-mcp": "node cursor-mcp.mjs"
   },
   "keywords": [
     "webgl",
@@ -24,10 +26,10 @@
     "godot",
     "cursor-ide"
   ],
-  "author": "Your Name",
+  "author": "Grokade Games",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.6.1",
     "express": "^4.18.2",
     "jsdom": "^22.1.0",
     "winston": "^3.11.0",
@@ -56,10 +58,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/WebGL-MCP.git"
+    "url": "git+https://github.com/grokadegames/webgl-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/WebGL-MCP/issues"
+    "url": "https://github.com/grokadegames/webgl-mcp/issues"
   },
-  "homepage": "https://github.com/yourusername/WebGL-MCP#readme"
+  "homepage": "https://github.com/grokadegames/webgl-mcp#readme"
 }

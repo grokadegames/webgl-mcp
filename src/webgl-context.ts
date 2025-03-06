@@ -10,6 +10,24 @@ export interface WebGLContext {
   };
 }
 
+export interface WebGLContextMetadata {
+  id: string;
+  width: number;
+  height: number;
+  capabilities: {
+    webgl2: boolean;
+    maxTextureSize: number;
+    maxViewportDims: [number, number];
+    extensions: string[];
+  };
+  performance?: {
+    fps: number;
+    drawCalls: number;
+    triangles: number;
+    textureMemory: number;
+  };
+}
+
 export class WebGLContextManager {
   private contexts: Map<string, WebGLContext> = new Map();
 
