@@ -1,6 +1,6 @@
 # Grokade Games WebGL-MCP
 
-A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. This server provides tools for Cursor IDE to analyze WebGL applications, optimize performance, and provide insights into WebGL-based games and applications.
+A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. This server provides tools to analyze WebGL applications, optimize performance, and provide insights into WebGL-based games and applications.
 
 ## Features
 
@@ -24,17 +24,17 @@ npm install
 npm run build
 ```
 
-## Usage with Cursor IDE
+## Usage with MCP-compatible tools
 
-This MCP server is designed to work with Cursor IDE to provide context for WebGL applications. To use it:
+This MCP server is designed to work with MCP-compatible tools to provide context for WebGL applications. To use it:
 
 1. Start the MCP server:
 
 ```bash
-npm run cursor-mcp
+npm run webgl-mcp
 ```
 
-2. In Cursor IDE, connect to the MCP server.
+2. In your MCP-compatible tool, connect to the MCP server.
 
 3. Use the available tools to analyze and optimize your WebGL applications.
 
@@ -94,7 +94,7 @@ To contribute to this project:
 - `npm run build`: Build the TypeScript project
 - `npm run dev`: Run the development server with hot reloading
 - `npm run start`: Start the compiled server
-- `npm run cursor-mcp`: Start the MCP server for Cursor IDE
+- `npm run webgl-mcp`: Start the WebGL MCP server
 - `npm run simple-mcp`: Start a simple MCP server for testing
 - `npm run test`: Run tests
 - `npm run lint`: Run linting

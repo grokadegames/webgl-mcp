@@ -1,4 +1,4 @@
-// MCP server for Cursor (ESM version)
+// WebGL MCP server for analyzing and optimizing WebGL applications
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -92,4 +92,4 @@ server.tool(
 // Start receiving messages on stdin and sending messages on stdout
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("WebGL MCP Server started and connected to Cursor");
+console.error("WebGL MCP Server started and connected to transport");

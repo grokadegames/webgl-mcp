@@ -14,7 +14,7 @@
     "docs": "typedoc --out docs/api src",
     "prepare": "husky install",
     "simple-mcp": "node simple-mcp.mjs",
-    "cursor-mcp": "node cursor-mcp.mjs"
+    "webgl-mcp": "node webgl-mcp.mjs"
   },
   "keywords": [
     "webgl",
