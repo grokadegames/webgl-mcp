@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import path from 'path';
-import zlib from 'zlib';
+import * as path from 'path';
+import * as zlib from 'zlib';
 import { promisify } from 'util';
 
 const gzip = promisify(zlib.gzip);
@@ -10,6 +10,13 @@ export interface BuildAnalysis {
   compressedSize: number;
   files: BuildFileAnalysis[];
   suggestions: string[];
+  templateUsed?: string;
+  templateConfig?: {
+    scaleToFit?: boolean;
+    optimizeForPixelArt?: boolean;
+    hasLoadingBar?: boolean;
+    mobileOptimized?: boolean;
+  };
 }
 
 export interface BuildFileAnalysis {
@@ -39,6 +46,19 @@ export class WebGLBuildAnalyzer {
         analysis.compressedSize += fileAnalysis.compressedSize;
       }
 
+      // Check for HTML template usage
+      const indexFile = files.find(f => path.basename(f).toLowerCase() === 'index.html');
+      if (indexFile) {
+        const htmlAnalysis = await this.analyzeHTMLTemplate(indexFile);
+        analysis.templateUsed = htmlAnalysis.templateName;
+        analysis.templateConfig = htmlAnalysis.config;
+        
+        // Add template-specific suggestions
+        if (htmlAnalysis.suggestions.length > 0) {
+          analysis.suggestions.push(...htmlAnalysis.suggestions);
+        }
+      }
+
       // Analyze overall build
       this.analyzeBuildStructure(analysis);
 
@@ -64,6 +84,70 @@ export class WebGLBuildAnalyzer {
     }
 
     return files;
+  }
+
+  private async analyzeHTMLTemplate(filePath: string): Promise<{
+    templateName: string;
+    config: {
+      scaleToFit?: boolean;
+      optimizeForPixelArt?: boolean;
+      hasLoadingBar?: boolean;
+      mobileOptimized?: boolean;
+    };
+    suggestions: string[];
+  }> {
+    const content = await fs.readFile(filePath, 'utf8');
+    const suggestions: string[] = [];
+    let templateName = 'Unknown';
+    const config: {
+      scaleToFit?: boolean;
+      optimizeForPixelArt?: boolean;
+      hasLoadingBar?: boolean;
+      mobileOptimized?: boolean;
+    } = {};
+
+    // Check for Better Minimal WebGL Template
+    if (content.includes('BetterMinimal') || 
+        (content.includes('scaleToFit') && content.includes('data-pixel-art'))) {
+      templateName = 'Better Minimal WebGL Template';
+      
+      // Check for scaling configuration
+      config.scaleToFit = !content.includes('scaleToFit = false');
+      
+      // Check for pixel art optimization
+      if (content.includes('data-pixel-art="true"')) {
+        config.optimizeForPixelArt = true;
+      }
+      
+      // Check for loading bar
+      if (content.includes('progressHandler') && content.includes('linear-gradient')) {
+        config.hasLoadingBar = true;
+      }
+      
+      // Check for mobile optimization
+      if (content.includes('iPhone|iPad|iPod|Android')) {
+        config.mobileOptimized = true;
+      }
+      
+      // Generate template-specific suggestions
+      if (!config.scaleToFit) {
+        suggestions.push('Consider enabling scale-to-fit for better user experience on different screen sizes.');
+      }
+      
+      if (!config.hasLoadingBar) {
+        suggestions.push('Enable the loading bar to provide visual feedback during asset loading.');
+      }
+      
+      if (!config.mobileOptimized) {
+        suggestions.push('Enable mobile optimizations for better performance on mobile devices.');
+      }
+    } else if (content.includes('UnityLoader') || content.includes('unityInstance')) {
+      templateName = 'Unity Default Template';
+      suggestions.push('Consider using the Better Minimal WebGL Template for improved scaling and mobile support.');
+      suggestions.push('The Better Minimal WebGL Template provides better canvas scaling and improved mobile device support.');
+    }
+
+    return { templateName, config, suggestions };
   }
 
   private async analyzeFile(filePath: string, buildPath: string): Promise<BuildFileAnalysis> {
@@ -102,8 +186,7 @@ export class WebGLBuildAnalyzer {
       case '.jpeg':
       case '.png':
       case '.webp':
-      case '.ktx':
-      case '.dds':
+      case '.gif':
         return 'texture';
       case '.glsl':
       case '.vert':
@@ -113,68 +196,97 @@ export class WebGLBuildAnalyzer {
         return 'javascript';
       case '.wasm':
         return 'webassembly';
+      case '.html':
+        return 'html';
+      case '.css':
+        return 'stylesheet';
+      case '.json':
+        return 'data';
       default:
         return 'other';
     }
   }
 
   private analyzeTexture(analysis: BuildFileAnalysis, content: Buffer): void {
-    const sizeInMB = analysis.size / (1024 * 1024);
-    
-    if (sizeInMB > 1) {
-      analysis.suggestions.push(
-        'Consider using compressed texture formats (KTX/DDS)',
-        'Evaluate if texture resolution can be reduced'
-      );
+    // Check texture size - large textures may need optimization
+    if (content.length > 1024 * 1024) {
+      analysis.suggestions.push(`Large texture (${(content.length / (1024 * 1024)).toFixed(2)} MB). Consider using compression or smaller textures.`);
     }
-
-    if (analysis.path.endsWith('.png')) {
-      analysis.suggestions.push('Consider using WebP format for better compression');
+    
+    // Check compression savings
+    const compressionRatio = analysis.size / analysis.compressedSize;
+    if (compressionRatio < 1.2) {
+      analysis.suggestions.push('Texture has low compression ratio. Consider using WebP format for better compression.');
     }
   }
 
   private analyzeShader(analysis: BuildFileAnalysis, content: Buffer): void {
-    const shaderCode = content.toString('utf-8');
+    const shaderText = content.toString('utf8');
     
-    if (shaderCode.includes('pow(') || shaderCode.includes('exp(')) {
-      analysis.suggestions.push('Consider optimizing expensive shader operations');
+    // Check for potential shader optimizations
+    if (shaderText.includes('pow(') || shaderText.includes('exp(') || shaderText.includes('log(')) {
+      analysis.suggestions.push('Shader uses expensive operations (pow, exp, log). Consider optimizing for better performance.');
     }
-
-    if (shaderCode.length > 1000) {
-      analysis.suggestions.push('Consider splitting large shaders into smaller chunks');
+    
+    // Check for precision qualifiers
+    if (!shaderText.includes('precision ')) {
+      analysis.suggestions.push('Shader missing precision qualifiers. Define precision for better performance and consistency.');
     }
   }
 
   private analyzeJavaScript(analysis: BuildFileAnalysis, content: Buffer): void {
-    const code = content.toString('utf-8');
+    const jsText = content.toString('utf8');
     
-    if (code.includes('console.log')) {
-      analysis.suggestions.push('Remove debug console.log statements for production');
+    // Check for large JS files
+    if (content.length > 5 * 1024 * 1024) {
+      analysis.suggestions.push(`Large JavaScript file (${(content.length / (1024 * 1024)).toFixed(2)} MB). Consider code splitting or minification.`);
     }
-
-    if (!code.includes('use strict')) {
-      analysis.suggestions.push('Consider adding "use strict" for better optimization');
+    
+    // Check for WebGL context creation
+    if (jsText.includes('getContext("webgl")') && !jsText.includes('getContext("webgl2")')) {
+      analysis.suggestions.push('Using WebGL 1.0. Consider upgrading to WebGL 2.0 for better performance and features.');
+    }
+    
+    // Check for memory management issues
+    if (jsText.includes('new Uint8Array(') || jsText.includes('new Float32Array(')) {
+      if (!jsText.includes('delete') && !jsText.includes('dispose')) {
+        analysis.suggestions.push('Creating typed arrays without apparent cleanup. Watch for memory leaks.');
+      }
     }
   }
 
   private analyzeBuildStructure(analysis: BuildAnalysis): void {
-    // Check total build size
-    const totalSizeMB = analysis.totalSize / (1024 * 1024);
-    if (totalSizeMB > 50) {
-      analysis.suggestions.push('Total build size exceeds 50MB, consider code splitting');
+    // Group files by type
+    const fileTypes = analysis.files.reduce((types, file) => {
+      types[file.type] = (types[file.type] || 0) + file.size;
+      return types;
+    }, {} as Record<string, number>);
+    
+    // Check total size
+    if (analysis.totalSize > 100 * 1024 * 1024) {
+      analysis.suggestions.push(`Large build size (${(analysis.totalSize / (1024 * 1024)).toFixed(2)} MB). Consider optimizing assets and code splitting.`);
     }
-
-    // Check compression ratio
-    const compressionRatio = analysis.compressedSize / analysis.totalSize;
-    if (compressionRatio > 0.8) {
-      analysis.suggestions.push('Poor compression ratio, review asset optimization');
+    
+    // Check texture usage
+    if (fileTypes['texture'] && fileTypes['texture'] > analysis.totalSize * 0.5) {
+      analysis.suggestions.push(`Textures account for over 50% of build size. Consider using texture compression or lower resolution textures.`);
     }
-
-    // Check file distribution
-    const textureFiles = analysis.files.filter(f => f.type === 'texture');
-    const textureSizeTotal = textureFiles.reduce((sum, f) => sum + f.size, 0);
-    if (textureSizeTotal > analysis.totalSize * 0.5) {
-      analysis.suggestions.push('Textures account for over 50% of build size, consider optimization');
+    
+    // Check JavaScript size
+    if (fileTypes['javascript'] && fileTypes['javascript'] > 20 * 1024 * 1024) {
+      analysis.suggestions.push(`Large JavaScript size (${(fileTypes['javascript'] / (1024 * 1024)).toFixed(2)} MB). Consider code splitting and tree shaking.`);
+    }
+    
+    // Check WebAssembly usage
+    if (!fileTypes['webassembly']) {
+      analysis.suggestions.push('No WebAssembly detected. Consider using WebAssembly for performance-critical code.');
+    }
+    
+    // Template-specific optimization suggestions
+    if (analysis.templateUsed === 'Better Minimal WebGL Template') {
+      analysis.suggestions.push('Using Better Minimal WebGL Template. Good choice for optimal WebGL performance and compatibility.');
+    } else if (analysis.templateUsed === 'Unknown') {
+      analysis.suggestions.push('Using an unknown HTML template. Consider using Better Minimal WebGL Template for optimal WebGL performance.');
     }
   }
 } 
