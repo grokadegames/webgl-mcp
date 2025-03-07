@@ -2,6 +2,31 @@
 
 A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. This server provides tools to analyze WebGL applications, optimize performance, and provide insights into WebGL-based games and applications.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MCP: v1.0](https://img.shields.io/badge/MCP-v1.0-blue.svg)](https://modelcontextprotocol.io/)
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Usage with MCP-compatible tools](#usage-with-mcp-compatible-tools)
+- [Available Tools](#available-tools)
+- [Better Minimal WebGL Template Integration](#better-minimal-webgl-template-integration)
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
+- [Scripts](#scripts)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Overview
+
+The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. This WebGL-MCP server implements the protocol to provide specialized WebGL analysis and optimization tools for game developers and web application creators.
+
+By using this server with MCP-compatible tools like AI-powered IDEs, you can easily analyze your WebGL applications, get optimization recommendations, and improve your game's performance across different platforms.
+
 ## Features
 
 - WebGL application analysis
@@ -9,9 +34,33 @@ A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. 
 - Memory usage analysis
 - Engine detection (Unity, Godot, etc.)
 - Shader optimization recommendations
-- Better Minimal WebGL Template detection and analysis
+- Template detection and analysis
 - Template-specific optimization suggestions
 - Mobile optimization recommendations
+- File structure and size analysis
+- WebGL capability assessment
+
+## Prerequisites
+
+- Node.js 16.x or higher
+- npm 7.x or higher
+- A WebGL application or game to analyze
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/grokadegames/webgl-mcp.git
+cd webgl-mcp
+
+# Install dependencies
+npm install
+
+# Start the MCP server
+npm run webgl-mcp
+```
+
+Now you can connect to the server using any MCP-compatible client and use the available tools to analyze your WebGL applications.
 
 ## Installation
 
@@ -43,7 +92,7 @@ Or use the provided script:
 ./run-mcp.sh
 ```
 
-2. In your MCP-compatible tool, connect to the MCP server.
+2. In your MCP-compatible tool (such as an AI-powered IDE or agent), connect to the MCP server.
 
 3. Use the available tools to analyze and optimize your WebGL applications.
 
@@ -51,7 +100,7 @@ Or use the provided script:
 
 ### analyze-webgl
 
-Analyzes a WebGL build or HTML file. Provides information about the template used, features detected, and optimization recommendations.
+Analyzes a WebGL build or HTML file. Provides information about the template used, features detected, file structure, and optimization recommendations.
 
 Parameters:
 - `path` (required): Path to WebGL build folder or index.html file
@@ -60,6 +109,12 @@ Example:
 ```
 analyze-webgl(path: "/path/to/webgl/build")
 ```
+
+Output includes:
+- Template analysis (type, features, etc.)
+- Build statistics (file counts, sizes)
+- Large file detection
+- Optimization recommendations
 
 ### optimize-webgl
 
@@ -76,6 +131,12 @@ Example:
 optimize-webgl(path: "/path/to/webgl/build", targetFPS: 60, optimizationGoals: ["performance", "mobile"])
 ```
 
+Output includes:
+- Template-specific optimization recommendations
+- Code and asset optimization suggestions
+- Mobile-specific optimizations (when specified)
+- Memory usage improvements (when specified)
+
 ### analyze-performance
 
 Analyzes performance metrics and provides performance-specific recommendations.
@@ -88,6 +149,12 @@ Example:
 ```
 analyze-performance(path: "/path/to/webgl/build", duration: 30)
 ```
+
+Output includes:
+- WebGL capabilities assessment
+- Performance bottleneck identification
+- Frame rate analysis
+- Asset loading optimization suggestions
 
 ## Better Minimal WebGL Template Integration
 
@@ -170,6 +237,18 @@ To contribute to this project:
 3. Make your changes
 4. Submit a pull request
 
+We welcome contributions that improve the analysis capabilities, add new optimization techniques, or enhance the MCP integration.
+
+## Troubleshooting
+
+Common issues and solutions:
+
+- **Connection failures**: Ensure your MCP client is configured correctly to connect to the server
+- **Path not found**: Verify that the path to your WebGL build is correct and accessible
+- **Analysis errors**: Make sure your WebGL build has all the necessary files, including index.html
+
+For more detailed troubleshooting, check the logs in the `error.log` and `combined.log` files.
+
 ## Scripts
 
 - `npm run build`: Build the TypeScript project
@@ -181,10 +260,22 @@ To contribute to this project:
 - `npm run lint`: Run linting
 - `npm run format`: Format code
 
+## Contributing
+
+We welcome contributions from the community! Whether you want to fix bugs, improve documentation, or add new features, please feel free to submit a pull request.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
 ## License
 
 MIT
 
-## Author
+## Contact
 
-Grokade Games 
+Grokade Games - [Website](https://grokadegames.com)
+
+Project Link: [https://github.com/grokadegames/webgl-mcp](https://github.com/grokadegames/webgl-mcp) 
