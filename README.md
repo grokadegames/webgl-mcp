@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for analyzing and optimizing WebGL games. This server provides tools to analyze WebGL applications, optimize performance, and provide insights into WebGL-based games and applications.
 
+<a href="https://glama.ai/mcp/servers/l5zh0e3z4x">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/l5zh0e3z4x/badge" alt="WebGL-Server MCP server" />
+</a>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP: v1.0](https://img.shields.io/badge/MCP-v1.0-blue.svg)](https://modelcontextprotocol.io/)
 
@@ -278,4 +282,4 @@ MIT
 
 Grokade Games - [Website](https://grokadegames.com)
 
-Project Link: [https://github.com/grokadegames/webgl-mcp](https://github.com/grokadegames/webgl-mcp) 
+Project Link: [https://github.com/grokadegames/webgl-mcp](https://github.com/grokadegames/webgl-mcp)
